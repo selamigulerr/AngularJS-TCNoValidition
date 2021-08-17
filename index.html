@@ -1,0 +1,110 @@
+<html>
+<title>T.C. ID validation</title>
+<link rel="stylesheet" href="https://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<style>
+  .card {
+    margin-top: 10%;
+  }
+
+  .card-block {
+    padding: 20px;
+  }
+
+  .m-t-md {
+    margin-top: 10px;
+  }
+
+  .form-control-success {
+    color: #5cb85c !important;
+  }
+
+  .form-control-warning {
+    color: #f0ad4e !important;
+  }
+
+  .card input::-webkit-outer-spin-button,
+  .card input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .has-warning ::placeholder {
+    color: #f0ad4e;
+    opacity: 1;
+  }
+
+  .has-warning :-ms-input-placeholder {
+    color: #f0ad4e;
+  }
+
+  .has-warning ::-ms-input-placeholder {
+    color: #f0ad4e;
+  }
+</style>
+
+<body>
+  <div class="container">
+    <h3>Angular JS ile TC Kimlik Doğrulama Sistemi</h3>
+    <div ng-app="app">
+  
+        <form action="#" name="validation">
+          <div  ng-controller="appCtrl">
+            <div>T.C. Kimlik Numarası </div>
+            <div>
+              <div ng-class="(tcValid) ? 'has-success' : 'has-warning'">
+                <input type="number" ng-keyup="validation.id.$valid && validate()" placeholder="T.C. Kimlik Numaranız"
+                  maxlength="11" ng-model="tcid" name="id" class="form-control"
+                  ng-class="(tcValid) ? 'form-control-success' : 'form-control-warning'" ng-minlength="11"
+                  ng-maxlength="11" required>
+                <div  ng-show="!validation.id.$valid || tcid.length>11">T.C. Kimlik numaranız
+                  <b>11</b> haneden oluşmalıdır.
+                </div>
+                <div class="form-control-feedback" ng-show="validation.id.$valid && tcValid">T.C. Kimlik doğrulama
+                  başarılı.</div>
+                <div class="form-control-feedback" ng-show="validation.id.$valid && !tcValid">T.C. Kimlik doğrulama
+                  başarısız.</div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+
+
+  <script>
+    const app = angular.module("app", []);
+
+    app.controller("appCtrl", $scope => {
+      const vm = $scope;
+      vm.tcid = null;
+      vm.tcValid = false;
+
+      vm.validate = () => {
+        const value = vm.tcid.toString();
+        let totalValue = 0;
+
+        for (var i = 0; i < 10; i++) {
+          totalValue += Number(value.substr(i, 1));
+        }
+
+        const rule = totalValue % 10 == value.substr(10, 1);
+        let total1 = 0;
+        let total2 = 0;
+        for (var i = 0; i < 10; i += 2) {
+          total1 += Number(value.substr(i, 1));
+        }
+        for (var i = 1; i < 10; i += 2) {
+          total2 += Number(value.substr(i, 1));
+        }
+        const ruleValid = (total1 * 7 - total2) % 10 == value.substr(9, 0);
+        vm.tcValid = rule && ruleValid;
+        console.log(ruleValid);
+      };
+    });
+
+  </script>
+</body>
+
+</html>
